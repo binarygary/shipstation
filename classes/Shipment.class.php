@@ -14,6 +14,8 @@ class Shipment {
 	function save() {
 		DB::insertUpdate('shipmentdetails',(array)$this);
 		
+		
+		
 		print_r($this);
 		echo "SHIPMENT SAVED";
 	}

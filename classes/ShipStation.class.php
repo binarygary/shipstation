@@ -1,5 +1,7 @@
 <?php 
 
+require_once('meekrodb.class.php');
+
 class ShipStation {
 	
 	var $apiKey='24dd86da9e7643c296e104e4eba9e74b';
@@ -38,6 +40,9 @@ class ShipStation {
 		$time = $time_end - $time_start;
 		//echo "$this->URL ran in $time seconds\n";
 		
+		$this->log();
+		
+		
 		if ($this->headerHandler($header)) {
 			return json_decode($body,1);
 		} else {
@@ -74,4 +79,15 @@ class ShipStation {
 			}
 		}
 	}
+	
+	function log() {
+		
+		DB::insert('sslogs', array(
+  		'time' => time(),
+  		'source' => $_SERVER['PHP_SELF'],
+			'url' => $this->URL
+		));
+	}
+	
+	
 }

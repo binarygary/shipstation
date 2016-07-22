@@ -18,7 +18,7 @@ function storeName($storeId) {
 
 $round_numerator=60*60*24;
 $roundedTime=(round(time()/$round_numerator)*$round_numerator);
-$modifydateend=date('Y-m-d',$roundedTime-(86400*4));
+$modifydateend=date('Y-m-d',$roundedTime-(86400*3));
 
 $shipStation=new ShipStation;
 $mandrill=new Mandrill('TWpU_BLdlFQKlWM0A2kjmw');
@@ -54,12 +54,12 @@ $message = array(
                 'name' => 'Jerry Watterson',
                 'type' => 'to'
 			),
-			/*array (
+			array (
 				'email' => 'mfinch@motobatt.com',
                 'name' => 'Matt Finch',
                 'type' => 'to'
 			),
-			array (
+			/*array (
 				'email' => 'ptron1@sunnbattery.net',
                 'name' => 'Michael Glover',
                 'type' => 'to'

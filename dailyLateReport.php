@@ -17,8 +17,6 @@ $startshipdate=date('Y-m-d',$roundedTime-(86400*8));
 $modifydateend=date('Y-m-d',$roundedTime-(86400*3));
 $today=date('Y-m-d');
 
-$ssusername="24dd86da9e7643c296e104e4eba9e74b";
-$sspassword="faa488390fdd4212a2aa8027804e8c43";
 
 $shipStation->requestString="orders?orderStatus=awaiting_shipment&modifyDateEnd=$modifydateend&pageSize=50";
 $response=$shipStation->query();

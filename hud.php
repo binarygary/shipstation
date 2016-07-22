@@ -1,9 +1,16 @@
 <?php
 
+
 spl_autoload_register(function ($class) {
     include 'classes/' . $class . '.class.php';
 });
 require_once 'classes/meekrodb.class.php';
+
+$cron=new Cron;
+$cron->runtime=2;
+$cron->start(basename(__FILE__),time());
+
+DB::startTransaction();
 
 $shipStation=new ShipStation;
 
@@ -21,33 +28,34 @@ $sspassword="faa488390fdd4212a2aa8027804e8c43";
 //awaiting shipment
 $shipStation->requestString="orders/listbytag?orderStatus=awaiting_shipment&pageSize=1&tagID=18950";
 $response=$shipStation->query();
-$awaitingShipment=$response[total];
+$awaitingShipment=$response['total'];
 
 //late orders
 $shipStation->requestString="orders?orderStatus=awaiting_shipment&modifyDateEnd=$modifydateend&pageSize=1";
 $response=$shipStation->query();
-$late=$response[total];
+$late=$response['total'];
 
 //total shipped
 $shipStation->requestString="shipments?shipDateStart=$startshipdate&pageSize=1";
 $response=$shipStation->query();
-$totalOrders=$response[total];
+$totalOrders=$response['total'];
 
 $count=1;
 
-while ($count<=$response[pages]) {
+while ($count<=$response['pages']) {
 	
 	
 	$shipStation->requestString="orders?modifyDateStart=$startdate&pageSize=500&page=$count";
 	$response=$shipStation->query();
 		
-	$orders=$response[orders];
+	$orders=$response['orders'];
 	
 	
 	if (!empty($orders)) {
 		foreach ($orders as $order) {
-			if ($order[orderStatus]=='shipped') {
-				switch ($order[serviceCode]) {
+			
+			if ($order['orderStatus']=='shipped') {
+				switch ($order['serviceCode']) {
 				case "usps_first_class_mail":
 					$service="FirstClass";
 					break;
@@ -67,15 +75,17 @@ while ($count<=$response[pages]) {
 				default:
 					$service="Other";
 				}
-				if (substr($order[shipDate],0,10)>$startshipdate){
-					$shipdate=substr($order[shipDate],0,10);
+				if (substr($order['shipDate'],0,10)>$startshipdate){
+					$shipdate=substr($order['shipDate'],0,10);
 					$table[$shipdate][$service]=$table[$shipdate][$service]+1;
 				}
 
 				$ordercount=$ordercount+1;
-				if (strtotime(substr($order[shipDate],2,8))-strtotime(substr($order[orderDate],2,8))<(86400*3)) {
+				if (strtotime(substr($order['shipDate'],2,8))-strtotime(substr($order['orderDate'],2,8))<(86400*3)) {
 					$fast=$fast+1;
 				}
+				
+				
 
 				//get shipped status!
 				//$shipStation->requestString="shipments?orderId=$order[orderId]";
@@ -84,6 +94,14 @@ while ($count<=$response[pages]) {
 				//	$user[$order[userId]]++;
 				//}	
 
+			} else if (is_array($order['items'])) {
+				foreach ($order['items'] as $item) {
+					//print_r($item);
+					$dateFactor=round((time()-strtotime($item['createDate']))/86400,0);
+					if ($dateFactor<10) {
+						$itemsArray[$item['sku']]=$itemsArray[$item['sku']]+($item['quantity']*$dateFactor*$item['unitPrice']);
+					}
+				}
 			}
 
 
@@ -98,6 +116,8 @@ while ($count<=$response[pages]) {
 
 }
 
+$itemsArray=serialize($itemsArray);
+
 //print_r($user);
 
 $fastPercent=round(($fast/$ordercount)*100,0);
@@ -109,7 +129,6 @@ if ($fastPercent>79) {
 
 ksort($table);
 
-DB::$dbName = 'shipstats';
 //save late
 DB::insertUpdate('stats', array(
   'NAME' => late, //primary key
@@ -147,5 +166,15 @@ DB::insertUpdate('stats', array(
   'NAME' => totalOrders, //primary key
   'VALUE' => $totalOrders
 ), array ('VALUE' => $totalOrders));
+
+
+DB::insertUpdate('stats', array(
+	'NAME' => orderCloud,
+	'VALUE' => $itemsArray
+), array ('VALUE' => $itemsArray));
+
+DB::commit();
+
+$cron->end(basename(__FILE__),time());
 
 ?>

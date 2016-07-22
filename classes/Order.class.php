@@ -22,7 +22,10 @@ class Order {
 		
 	function save() {
 		DB::insertUpdate('shipments',(array)$this);
-		print_r($this);
+		
+		
+		
+		//print_r($this);
 	}
 	
 	function load($orderId) {

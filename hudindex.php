@@ -4,7 +4,7 @@ require_once 'classes/meekrodb.class.php';
 
 $today=date('Y-m-d');
 
-DB::$dbName = 'shipstats';
+//DB::$dbName = 'shipstats';
 
 $results=DB::query("SELECT * FROM stats");
 
@@ -63,6 +63,19 @@ if ($totalOrders>$bestOrder) {
 	font-variant: bold;
 	font-size: 1.5em;
 }
+		
+		img {
+			width: auto;
+			height: 550px;
+		}
+		
+		body {
+			background-color: black;
+		}
+		
+		pre {
+			color: white;
+		}
 </style>
 
 <script type="text/JavaScript">
@@ -74,6 +87,51 @@ function timeRefresh(timeoutPeriod)
 	
 </HEAD>
 <BODY onload="JavaScript:timeRefresh(60000);">
+	
+	
+	<?php 
+	
+	if (count($table)<4) {
+		
+		$items=array('404','i+hate+technology','computer+error','file+not+found');
+		$query=$items[array_rand($items)];
+		
+		echo exec('figlet -w 160 "404 error - no stuff"'.$arr,$return);
+	
+		echo "<pre>";
+		foreach ($return as $line) {
+			echo "$line<BR>";
+		}
+		echo "</pre>";
+
+		echo "<CENTER>";
+		
+		$key='dc6zaTOxFJmzC';
+		
+		
+		
+		$endpoint="http://api.giphy.com/v1/gifs/search?q=$query&api_key=$key&limit=25";
+		$rand=rand(0,24);
+
+		$json=file_get_contents($endpoint);
+		$obj=json_decode($json);
+
+		//print_r($obj);
+
+		echo "<img src=".$obj->data[$rand]->images->downsized_large->url.">";
+		echo "<BR><i>powered by giphy</i>";
+		
+		echo "<!--";
+		print_r($obj);
+		echo "-->";
+	} else {
+	
+	
+	
+	
+	?>
+	
+	
 	<TABLE WIDTH=100% HEIGHT=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
 		<TR>
 			<TD WIDTH=50% HEIGHT=45% BGCOLOR=BLACK><CENTER><FONT style="font-size:150px; color:red"><?PHP echo $late; ?></FONT><BR><FONT style="font-size:50px; color:red">ORDERS MORE THAN 4 DAYS OLD</FONT></CENTER></TD>
@@ -89,7 +147,11 @@ function timeRefresh(timeoutPeriod)
 								</tr>
 							  </thead>
 							  <tbody>
-							<?php foreach ($table as $header=>$value){ 
+							<?php 
+									
+									if (is_array($table)) {
+									
+									foreach ($table as $header=>$value){ 
 								  $sum=array_sum($value);
 									$day++;
 								  ?>
@@ -114,16 +176,17 @@ function timeRefresh(timeoutPeriod)
 								  <?php 
 									if ($sum>$bestDay) {
 									DB::insertUpdate('stats', array(
-  									'NAME' => bestDay, //primary key
-  									'VALUE' => $sum
-									), array ('VALUE' => $sum));
+  										'NAME' => bestDay, //primary key
+  										'VALUE' => $sum
+										), array ('VALUE' => $sum));
 									}
 
 
 
 
 
-									} ?>
+									} 
+									}?>
 							  <tbody>
 							</table>
 				
@@ -142,3 +205,5 @@ function timeRefresh(timeoutPeriod)
 			
 </BODY>
 </HTML>
+			
+			<?php }

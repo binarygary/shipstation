@@ -5,6 +5,10 @@ spl_autoload_register(function ($class) {
 });
 require_once('classes/meekrodb.class.php');
 
+$cron=new Cron;
+$cron->runtime=60;
+$cron->start(basename(__FILE__),time());
+
 $shipStation=new ShipStation;
 
 $i=1;
@@ -74,3 +78,4 @@ foreach ($response as $userDetails) {
 
 }
 
+$cron->end(basename(__FILE__),time());

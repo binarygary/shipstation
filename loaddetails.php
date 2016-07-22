@@ -5,6 +5,10 @@ spl_autoload_register(function ($class) {
 });
 require_once('classes/meekrodb.class.php');
 
+$cron=new Cron;
+$cron->runtime=60;
+$cron->start(basename(__FILE__),time());
+
 $starttime=time();
 
 $shipStation=new ShipStation;
@@ -15,7 +19,8 @@ $oldDate=date('Y-m-d',time()-31536000);
 
 while (time()-$starttime<1140) {
 
-$results=DB::queryFirstColumn("SELECT orderId FROM shipments WHERE orderStatus='shipped' AND orderDate>'$oldDate' ORDER BY shipDate ASC LIMIT 0,1");
+$results=DB::queryFirstColumn("SELECT orderId FROM shipments WHERE orderStatus='shipped' AND orderDate>'$oldDate' ORDER BY shipDate DESC LIMIT 0,1");
+//$results=DB::queryFirstColumn("SELECT orderId FROM shipments WHERE orderDate>'$oldDate' ORDER BY shipDate DESC LIMIT 0,1");
 
 foreach ($results as $result) {
 	//print_r($result);
@@ -81,3 +86,5 @@ $runtime=$endtime-$starttime;
 echo "$runtime seconds\r\n";
 echo memory_get_peak_usage();
 echo " peak memory usage";
+
+$cron->end(basename(__FILE__),time());
