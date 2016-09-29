@@ -7,11 +7,6 @@ require_once('classes/meekrodb.class.php');
 require_once('classes/Mandrill.php');
 
 
-$cron=new Cron;
-$cron->runtime=1;
-$cron->start(basename(__FILE__),time());
-
-
 $calls = DB::query("SELECT * FROM callbacks WHERE type='order' LIMIT 0,19");
 
 foreach ($calls as $call) {
@@ -100,7 +95,6 @@ foreach ($calls as $call) {
 	
 	
 
-	$cron->end(basename(__FILE__),time());
 	
 	
 	

@@ -6,11 +6,7 @@ spl_autoload_register(function ($class) {
 });
 require_once 'classes/meekrodb.class.php';
 
-$cron=new Cron;
-$cron->runtime=2;
-$cron->start(basename(__FILE__),time());
-
-DB::startTransaction();
+//DB::startTransaction();
 
 $shipStation=new ShipStation;
 
@@ -42,14 +38,15 @@ $totalOrders=$response['total'];
 
 $count=1;
 
+print_r($response['pages']);
+
 while ($count<=$response['pages']) {
 	
 	
 	$shipStation->requestString="orders?modifyDateStart=$startdate&pageSize=500&page=$count";
 	$response=$shipStation->query();
 		
-	$orders=$response['orders'];
-	
+	$orders=$response['orders'];	
 	
 	if (!empty($orders)) {
 		foreach ($orders as $order) {
@@ -108,7 +105,6 @@ while ($count<=$response['pages']) {
 		//print_r($order);
 		}
 	}
-	
 	$count++;
 	//break;
 	
@@ -173,8 +169,8 @@ DB::insertUpdate('stats', array(
 	'VALUE' => $itemsArray
 ), array ('VALUE' => $itemsArray));
 
-DB::commit();
+//DB::commit();
 
-$cron->end(basename(__FILE__),time());
+//$cron->end(basename(__FILE__),time());
 
 ?>

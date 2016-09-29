@@ -45,8 +45,8 @@ foreach ($response[orders] as $order) {
 $message = array(
         'html' => $message,
         'subject' => "$lateOrders Late Orders valued at \$$outstandingTotal did not leave shipping today",
-        'from_email' => 'gtyler@sunnbattery.net',
-        'from_name' => 'Tyler Kovar',
+        'from_email' => 'glohr@sunnbattery.net',
+        'from_name' => 'Greg Lohr',
         'to' => array(
 			
 			array (
@@ -65,12 +65,12 @@ $message = array(
                 'type' => 'to'
 			),*/
 			array (
-				'email' => 'gtyler@sunnbattery.net',
-                'name' => 'Tyler Kovar',
+				'email' => 'glohr@sunnbattery.net',
+                'name' => 'Greg Lohr',
                 'type' => 'to'
 			),
         ),
-        'headers' => array('Reply-To' => 'gtyler@motobatt.com'),
+        'headers' => array('Reply-To' => 'glohr@motobatt.com'),
         'important' => false,
         'track_opens' => null,
         'track_clicks' => null,

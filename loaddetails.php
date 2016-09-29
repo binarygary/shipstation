@@ -5,10 +5,6 @@ spl_autoload_register(function ($class) {
 });
 require_once('classes/meekrodb.class.php');
 
-$cron=new Cron;
-$cron->runtime=60;
-$cron->start(basename(__FILE__),time());
-
 $starttime=time();
 
 $shipStation=new ShipStation;
@@ -86,5 +82,3 @@ $runtime=$endtime-$starttime;
 echo "$runtime seconds\r\n";
 echo memory_get_peak_usage();
 echo " peak memory usage";
-
-$cron->end(basename(__FILE__),time());

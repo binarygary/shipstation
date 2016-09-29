@@ -65,8 +65,11 @@ if ($totalOrders>$bestOrder) {
 }
 		
 		img {
+			min-width: 75%;
 			width: auto;
-			height: 550px;
+			height: auto;
+			max-height: 100%;
+			max-width: 100%;
 		}
 		
 		body {
@@ -135,7 +138,30 @@ function timeRefresh(timeoutPeriod)
 	<TABLE WIDTH=100% HEIGHT=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
 		<TR>
 			<TD WIDTH=50% HEIGHT=45% BGCOLOR=BLACK><CENTER><FONT style="font-size:150px; color:red"><?PHP echo $late; ?></FONT><BR><FONT style="font-size:50px; color:red">ORDERS MORE THAN 4 DAYS OLD</FONT></CENTER></TD>
-			<TD WIDTH=50% HEIGHT=45% BGCOLOR=BLUE><CENTER><FONT style="font-size:150px; color:white"><?PHP echo $awaitingShipment; ?></FONT><BR><FONT style="font-size:50px; color:white">PRINTED AND IN SHIPPING</FONT></CENTER></TD>
+			<TD WIDTH=50% HEIGHT=45% BGCOLOR=BLUE><CENTER><FONT style="font-size:150px; color:white">
+				<?php
+					if ( $_GET['test'] == 'true' ) {
+						$awaitingShipment=0;
+					}
+						
+					if ( $awaitingShipment!=0 ) {
+						echo $awaitingShipment;
+						?></FONT><BR><FONT style="font-size:50px; color:white">PRINTED AND IN SHIPPING</FONT></CENTER><?php
+					} else {
+						$items=array( 'celebrate' );
+						$query=$items[array_rand($items)];
+						echo "<CENTER>";
+						$key='dc6zaTOxFJmzC';
+						$endpoint="http://api.giphy.com/v1/gifs/search?q=$query&api_key=$key&limit=25";
+						$rand=rand(0,24);
+						$json=file_get_contents($endpoint);
+						$obj=json_decode($json);
+						echo "<img src=".$obj->data[$rand]->images->downsized_large->url.">";
+						echo "<BR><i style=\"font-size:8px\">powered by giphy</i>";
+					}
+					?>
+				
+			</TD>
 		</TR>
 		<TR>
 			<TD WIDTH=50% HEIGHT=45% BGCOLOR=BLACK><CENTER><FONT style="font-size:150px; color:<?php echo $fastColor; ?>"><?PHP echo $fastPercent; ?>%</FONT><BR><FONT style="font-size:50px; color:green">SHIPPED UNDER 1 BUSINESS DAY</FONT></CENTER></TD>
