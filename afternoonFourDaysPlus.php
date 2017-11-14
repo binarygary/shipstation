@@ -55,16 +55,6 @@ $message = array(
                 'type' => 'to'
 			),
 			array (
-				'email' => 'mfinch@motobatt.com',
-                'name' => 'Matt Finch',
-                'type' => 'to'
-			),
-			/*array (
-				'email' => 'ptron1@sunnbattery.net',
-                'name' => 'Michael Glover',
-                'type' => 'to'
-			),*/
-			array (
 				'email' => 'glohr@sunnbattery.net',
                 'name' => 'Greg Lohr',
                 'type' => 'to'
